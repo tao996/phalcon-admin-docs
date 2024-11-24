@@ -1,0 +1,125 @@
+# 简介
+
+> Phalcon Admin 基于 Phalcon(5.8) 框架，用于快速开发 Web 站点
+
+`tips` before you read the next content, try the `quick start` is better
+
+### 主要特性
+
+* `workerman` 支持（Dev version）
+
+```
+when: when your api/view work ok, 你无须修改任何代码，即可切换到 workerman 模式，直接实现性能提升
+
+the request/response/cookie/cookies/session/di service has rewrite,
+make the url result is same between the phalcon and workerman
+```
+
+see the [workerman](/zh-cn/workerman.md) part for more detail
+
+* 支持多应用
+
+```
+when:  当你需要为多位客户提供定制化站点，而这些站点都拥有大部分相同的代码（框架/后台）
+每个应用可支持子目录功能，每个应用支持绑定多个不同的域名
+
+src/App/Projects/
+    |-- demo        # a demo to show how the project work， use `/p/demo` to visit it
+```
+
+* 支持多模块
+
+```
+when: 集成更多功能，并可将模块打包给他人使用；每个模块都是独立的，意味着你可以安全地移除它（除非你在其它的模块或应用中引用它）
+每个模块还支持子模块，子目录功能
+
+src/App/Modules
+    |-- demo    # a demo module to show how the Modules work, use `/m/demo` to visit it
+    |-- tao     # 集成了 RBAC/CMS/微信登录/微信支付, if you don't need it, remove it
+```
+
+* 动态路由
+
+```
+根据路由来加载不同的控制器，返回不同模式的数据
+
+[sw/][语言/][api/][p/模块/|m/应用/][controller/][action/][params]
+
+
+```
+
+see the [Route](/zh-cn/route.md) part for more detail
+
+### 目录结构
+
+如果你用过 `laravel`, 那这个目录结构会比较熟悉
+
+```
+phalcon-admin/
+|-- backup/                             # a dir that for backup/update setting files for `php admin` toolkit
+|-- docker/                             # anything about docker
+    |-- log/
+        |-- mysql/                      # mysql service log dir
+        |-- nginx/                      # nginx service log dir
+        |-- php/                        # php service log dir
+    |-- mysql/
+        |-- phalcon-admin.sql           # init db data, 如果使用 mysql 服务，则会自动加载；否则请自行导入到数据库中
+    |-- nginx/
+        |-- sites/
+            |-- default.example.conf    # site config for nginx service
+            |-- assets.example.conf     # be include for default.example.conf, make your assets independent to your project or module
+        |-- host.example.conf           # you can copy it to /etc/nginx/conf.d if you use nginx proxy
+        |-- host.location.example.txt   # proxy setting for host.example.conf, copy to nginx conf.d together
+    |-- php/
+        |-- php.example.ini             # php service image use this file like php.ini
+        |-- supervisord.example.conf    # php cli image use this file to start workerman
+    |-- storage/
+        |-- mysql/                      # mysql image data, (zip this dir to replace the backup/ dir ?)
+        |-- redis/                      # redis image data
+|-- src/                            # the main source code
+    |-- App
+    |-- bootstrap/
+        |-- app.php                 # bootstrap file
+    |-- config/
+        |-- config.php              # you phalcon services global config file
+        |-- project.php             # project config, for demo/test, domain mapping
+    |-- public/                     # warning: save you js/css/image in your project/module, don't put them in the public dir
+        |-- index.php               # entry file
+    |-- routes/
+        |-- cli.php                 # command route, for unitest, migration
+        |-- web.php                 # nothing here, most of time you don't need it
+    |-- storage/                    # tmp dir when running
+        |-- app/                    # some cli pid file are save here
+        |-- cache/                  # session/view save here
+        |-- data/
+            |- migration            # phalcon migrate tool read/save db migrate data here
+        |-- logs/                   # exception or sql log save here
+    |-- tao996/                     # a library than make this project work
+        |-- phar/                   
+            |-- dotenv.phar             # https://github.com/symfony/dotenv
+            |-- phalcon-migrations.phar # I change the https://github.com/phalcon/migrations to make it work together for this project
+            |-- phpseclib.phar          # maintain use this to backup/upload files from/to production server
+            |-- workerman.phar          # https://github.com/walkor/workerman
+        |-- Phax
+            |-- Bridge/             # rewrite phalcon services to make it work in workerman
+            |-- Db/                 # db classes, make ORM write like laravel/thinkphp
+            |-- Events/             # I use it in development mode
+            |-- Foundation/         # load service and route
+                |-- Application.php # load env/config/service....
+                |-- Route.php       # save the current request info
+            |-- Helper/             # some classes about phalcon
+            |-- Mvc/                # base Controller/Model/Module
+            |-- Support/
+                |-- Facade/         # some function classes for phalcon
+                |-- I18n/           # language
+                |-- Validation/     # extend phalcon validation
+            |-- Router.php          # analysis request url
+            |-- ...
+
+|-- .env.example                    # docker-compose.yaml setting
+|-- docker-compose.example.yaml     
+|-- toolkit/                        # files for admin
+|-- admin                           # a tool to help manage phalcon-admin project, `php admin` to see the help
+```
+
+在本地开发时，大部分 `.example.xxx` 可以在 `docker-compose.yaml` 中被直接使用；具体查看内部服务的  `volumes` 部分
