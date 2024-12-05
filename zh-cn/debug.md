@@ -3,7 +3,7 @@ make sure you have setting in [PHPStorm Docker](zh-cn/phpstorm.md)
 ### Xdebug in Docker
 
 
-默认配置已经在 `php/php.example.ini` 中存在，不建议直接修改 `php.example.ini` 文件，可以复制一份修改名称为 `php.ini`
+默认配置已经在 `php/php.example.ini` 中存在，不建议直接修改 `php.example.ini` 文件，可以复制一份修改名称为 `php.ini`（注意修改 `docker-compose.yaml` 中 php service 对应的配置）
 
 ```ini
 ; open the xdebug setting in php/php.ini
@@ -36,7 +36,7 @@ services:
     volumes:
       - ./src:/var/www:delegated
       - ./log/php:/var/log/php/:rw
-      ;- ./php/php.example.ini:/usr/local/etc/php/php.ini 修改为下面的 php.ini
+      ;- ./php/php.example.ini:/usr/local/etc/php/php.ini  # <-------- 修改为下面的 php.ini
       - ./php/php.ini:/usr/local/etc/php/php.ini
     networks:
       - backend
@@ -116,4 +116,4 @@ IDE 配置 `PHP > Servers` 中的 `Name`与 `docker-compose.yaml` 中 php 服务
 
 * xdebug 正常调试，但 Action 内部的断点又被忽略
 
-不知道具体原因，直接删除项目下的 `.idea` 目录，然后重新打开，再配置，可恢复正常
+不知道具体原因，直接删除项目下的 `.idea` 目录，然后重新打开，再配置，可恢复正常。

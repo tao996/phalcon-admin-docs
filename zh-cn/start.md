@@ -15,13 +15,27 @@ after you are family with this project, copy another pro setting file without th
 ```
 # git clone --depth=1 https://gitee.com/taoooo/phalcon-admin.git 
 git clone --depth=1 https://github.com/tao996/phalcon-admin.git
+
 cd phalcon-admin
-cp .env.example .env
-cp docker-compose.example.yaml docker-compose.yaml
+
+php admin quick
+# NOTICE: if you don't want to run `php admin quick`, you can run the below commands step by step
+# cp .env.example .env
+# cp docker-compose.example.yaml docker-compose.yaml
+# cp src/config/config.example.php src/config/config.php
+
+# NOTICE: if local system is Linux, run `chmod -R 777 str/storage` to make the docker images can write log here
 docker compose up -d # or docker-compose up -d
 ```
 
-如果需要更好的控制全部的配置文件，请查看 [admin](/zh-cn/admin.md) 一节
+ok, now open http://localhost:8071 `(run in php-fpm)`, http://localhost:8072 `(run in workerman)`, and `8072` is more faster than `8071`.
+
+see the entiry `src/App/Http`,  good luck.
+
+* 如果需要更好的控制全部的配置文件，请查看 [admin](/zh-cn/admin.md) 一节；
+* if you want to build your phalcon image, please go to https://github.com/tao996/phalcon-docker-images
+
+more info coming soon ... TODO
 
 ### PHPStorm
 

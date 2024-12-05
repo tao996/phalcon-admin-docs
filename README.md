@@ -2,7 +2,7 @@
 
 > Phalcon Admin 基于 Phalcon(5.8) 框架，用于快速开发 Web 站点
 
-`tips` before you read the next content, try the `quick start` is better
+`tips` before you read the next content, It's better to practice `quick start`.
 
 ### 主要特性
 
@@ -10,10 +10,9 @@
 
 ```
 when: when your api/view work ok, 你无须修改任何代码，即可切换到 workerman 模式，直接实现性能提升
-
-the request/response/cookie/cookies/session/di service has rewrite,
-make the url result is same between the phalcon and workerman
 ```
+
+the `request/response/cookie/cookies/session/di` service has rewrite, make the url result is same between the phalcon and workerman
 
 see the [workerman](/zh-cn/workerman.md) part for more detail
 
@@ -22,6 +21,7 @@ see the [workerman](/zh-cn/workerman.md) part for more detail
 ```
 when:  当你需要为多位客户提供定制化站点，而这些站点都拥有大部分相同的代码（框架/后台）
 每个应用可支持子目录功能，每个应用支持绑定多个不同的域名
+每个应用允许有自己的配置文件
 
 src/App/Projects/
     |-- demo        # a demo to show how the project work， use `/p/demo` to visit it
@@ -43,9 +43,7 @@ src/App/Modules
 ```
 根据路由来加载不同的控制器，返回不同模式的数据
 
-[sw/][语言/][api/][p/模块/|m/应用/][controller/][action/][params]
-
-
+[sw/][语言/][api/][p/ProjectName/|m/ModuleName/][controller/][action/][params]
 ```
 
 see the [Route](/zh-cn/route.md) part for more detail
