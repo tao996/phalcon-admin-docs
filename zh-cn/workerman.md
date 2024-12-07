@@ -6,7 +6,8 @@ in `phalcon`, some services are depends on PHP global var, like `$_SERVER ...`, 
 * `Coroutine.php` make all work together
 * ...
 
-to run the demo, write a nginx config file in your local PC
+in develop mode, you can open http://localhost:8072/sw/ direct.
+but it's better to write a nginx config file in your local PC
 
 ```
 // phadmin.test.conf
@@ -31,4 +32,4 @@ server {
 127.0.0.1 phadmin.test
 ```
 
-open the `http://phadmin.test/sw/m/demo` and `http://phadmin.test/m/demo`, you will see the result
+then open the http://phadmin.test/sw/m/demo and http://phadmin.test/m/demo, you will see the result

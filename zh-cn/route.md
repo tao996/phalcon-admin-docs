@@ -1,13 +1,24 @@
 ## 路由
 
-when a `$_SERVER['REQUEST_URI']` is request, 我们会使用 `Phax\Foundation\Route` 来分析请求地址的信息；
+when a `$_SERVER['REQUEST_URI']` is request, 我们会使用 `Phax\Foundation\Route` 来分析请求地址的信息； then we will add the uri route infomation to the `\Phalcon\Mvc\Router` (this meats we only add one route in running).
 
 detail see the `src/tao996/Phax/Foundation/Application.php->routeWith` method.
 
 以下为一个请求示例 `http://phadmin.test/sw/m/demo`
 
 ```
-route->routerOptions
+// route->urlOptions
+Array
+(
+    [sw] => 1           # this is a workerman request
+    [language] =>       # language
+    [api] =>            # a view, not a api
+    [project] =>        # not a App/Projects/xxx
+    [module] => 1       # to App/Modules/xxx
+    [path] => demo      # the module name, map to App/Modules/demo
+)
+
+// route->routerOptions
 Array
 (
     [pattern] => /sw/m/:module
@@ -39,23 +50,13 @@ Array
 
         )
 
-    [route] => /sw/m/:module                                # use to \Phalcon\Mvc\Router
+    [route] => /sw/m/:module                                # use for \Phalcon\Mvc\Router
     [mainView] => /var/www/App/Modules/demo/views/index
     [pickview] => index/index
 )
-route->urlOptions
-Array
-(
-    [sw] => 1           # this is a workerman request
-    [language] =>       # language
-    [api] =>            # is a view, not a api
-    [project] =>        # not a App/Projects/xxx
-    [module] => 1       # to App/Modules/xxx
-    [path] => demo      # the module name, map to App/Modules/demo
-)
 ```
 
-then the url infomation will be add to `\Phalcon\Mvc\Router`
+then be add to `\Phalcon\Mvc\Router`
 
 ```php
 /**
@@ -65,3 +66,5 @@ $router = $di->getShared('router');
 $router->setDefaultNamespace($route->routerOptions['namespace']);
 $router->add($route->routerOptions['route'], $route->routerOptions['paths']);
 ```
+
+ok, it works.

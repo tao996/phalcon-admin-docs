@@ -1,6 +1,8 @@
 # 简介
 
-> Phalcon Admin 基于 Phalcon(5.8) 框架，用于快速开发 Web 站点
+Phalcon Admin 基于 Phalcon(5.8) 框架，用于快速开发 Web 站点；
+
+> 这是一个为创业公司准备的工具，用于快速地创建应用测试市场。
 
 `tips` before you read the next content, It's better to practice `quick start`.
 
@@ -35,7 +37,6 @@ when: 集成更多功能，并可将模块打包给他人使用；每个模块�
 
 src/App/Modules
     |-- demo    # a demo module to show how the Modules work, use `/m/demo` to visit it
-    |-- tao     # 集成了 RBAC/CMS/微信登录/微信支付, if you don't need it, remove it
 ```
 
 * 动态路由
@@ -61,7 +62,9 @@ phalcon-admin/
         |-- nginx/                      # nginx service log dir
         |-- php/                        # php service log dir
     |-- mysql/
-        |-- phalcon-admin.sql           # init db data, 如果使用 mysql 服务，则会自动加载；否则请自行导入到数据库中
+        |-- sql/
+            |-- 001-create-tables.sql   # init db data, 如果使用 mysql 服务，则会自动加载；否则请自行导入到数据库中
+        |-- my.example.cnf              # mysql 服务配置
     |-- nginx/
         |-- sites/
             |-- default.example.conf    # site config for nginx service
@@ -75,7 +78,14 @@ phalcon-admin/
         |-- mysql/                      # mysql image data, (zip this dir to replace the backup/ dir ?)
         |-- redis/                      # redis image data
 |-- src/                            # the main source code
-    |-- App
+    |-- App                         
+        |-- Console                 # the default cli tasks, see the src/routes/cli.php for details
+        |-- Http                    # the default web home page
+        |-- Modules/
+            |-- demo                # a demo how to use module, http://localhost:8071/m/demo
+        |-- Projects/
+            |-- demo                # a demo how to use project, http://localhost:8071/p/demo
+        |-- Workerman               # a demo how to use workerman, http://localhost:8072
     |-- bootstrap/
         |-- app.php                 # bootstrap file
     |-- config/
