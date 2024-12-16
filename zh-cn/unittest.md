@@ -44,3 +44,10 @@ docker-compose exec php sh // 也可能是 docker compose 取决于你的系统
 3. 查看测试结果
 
 ![测试结果](../assets/images/unittest.result3.jpg)
+
+
+### 常见问题
+
+* `Allowed memory size of 16777216 bytes exhausted (tried to allocate 274432 bytes)`
+
+默认 `php.example.ini` 中 `memory_limit = 16M`，可以修改为 `memory_limit = 256M`

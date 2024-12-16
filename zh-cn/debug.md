@@ -96,7 +96,7 @@ add the `xdebug.client_port` value `19003` to the Debug port.
 1. 选择刚刚创建的 `index8071`
 2. 打开连接监听开关
 3. 在待访问页面打上断点（示例为 `src/App/Http/Controllers/IndexController.php`，即默认首页）
-4. 在浏览器中访问默认的首页 `http://localhost:8071`
+4. 在浏览器中访问默认的首页 http://localhost:8071
 
 ![Test Result](../assets/images/debug.ok.jpg)
 
@@ -114,6 +114,10 @@ add the `xdebug.client_port` value `19003` to the Debug port.
 
 IDE 配置 `PHP > Servers` 中的 `Name`与 `docker-compose.yaml` 中 php 服务的 `serverName` 不一致
 
-* xdebug 正常调试，但 Action 内部的断点又被忽略
+* xdebug work ok in browser, but breakpoints not stop in api tools
 
-不知道具体原因，直接删除项目下的 `.idea` 目录，然后重新打开，再配置，可恢复正常。
+在浏览器中 debug 正常，在其它 api 工具之类的不正常，总会自动跳过断点；原因暂未知
+
+1. 不知道具体原因，直接删除项目下的 `.idea` 目录，然后重新打开，再配置
+2. 更换 image, 使用其它版本的 xdebug
+3. 更换 PHPStorm

@@ -105,9 +105,9 @@ phalcon-admin/
     |-- tao996/                     # a library than make this project work
         |-- phar/                   
             |-- dotenv.phar             # https://github.com/symfony/dotenv
-            |-- phalcon-migrations.phar # I change the https://github.com/phalcon/migrations to make it work together for this project
-            |-- phpseclib.phar          # maintain use this to backup/upload files from/to production server
-            |-- workerman.phar          # https://github.com/walkor/workerman
+            |-- phalcon-migrations.phar # https://github.com/phalcon/migrations , modify to make it work together with phalcon-admin
+            |-- phpseclib.phar          # `php admin` tool, use this to backup/upload files from/to production server
+            |-- workerman.phar          # https://github.com/walkor/workerman, modify the session manager to share
         |-- Phax
             |-- Bridge/             # rewrite phalcon services to make it work in workerman
             |-- Db/                 # db classes, make ORM write like laravel/thinkphp
