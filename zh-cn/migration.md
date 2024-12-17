@@ -5,7 +5,7 @@
 当执行 `php artisan migration` 时，默认读取的配置顺序如下
 
 1. 通过命令行来指定数据库文件 `php artisan migration --config=yourDbConfigFile`
-2. 如果 `src/config/migration.php` 文件存在，则使用它
+2. 如果 `src/config/migration.php` 文件存在并且不为空，则使用它；如果 `migration.php` 不为空并且你要跳过它，则可以追加 `skip` 参数；示例 `php artisan migration r skip` 则不会读取此文件
 3. 读取 `src/config/config.php` 中，数据库的配置
 
 ```
@@ -22,29 +22,33 @@ Help:
 
 Usage: Generate a Migration
   migration generate|g            # generate all tables, default save in storage/data/migration;
-  
   examples:
-  migration g --p=city            # generate for project city, only export city_ structure, save in app/Http/Projects/xxx/data/migration
-  migration g --m=demo --datas    # generate for modules demo, export demo_ structure and data, save in app/Modules/xxx/data/migration
-  migration g --table=demo_,tao_  # generate tables prefix with demo_ or tao_
-  migration g --table=demo_,tao_ --datas  # generate tables prefix with demo_ or tao_ and tables data
-  migration g --table=demo_,tao_ --datas=demo_*  # generate tables prefix with demo_ or tao_ and only demo_ data
+  migration g --p=city                             # generate for project city, save in app/Http/Projects/xxx/data/migration
+  migration g --m=demo --datas                     # generate for modules demo, save in app/Modules/xxx/data/migration
+  migration g --table=demo_,tao_                   # generate tables structure start with demo_ or tao_
+  migration g --table=demo_,tao_ --datas           # generate tables structure and data start with demo_ and tao_
+  migration g --table=demo_,tao_ --datas=demo_*    # generate tables structure start with demo_ and tao_, but data only start with demo_
 
 Usage: Run a Migration
-  migration run|r        # import tables(data) from generated migrations, default load from storage/data/migration
-  
+  migration run|r        # import tables(structure/data) from generated migrations
   examples:
-  migration r --config=config/migration.php        # import tables(data) to database, db setting from config/migration.php
+  migration r                # migration from storage/data/migration
+  migration r -p=demo        # migration from src/App/Projects/demo/data/migration
+  migration r -m=demo        # migration from src/App/Modules/demo/data/migration
 
 Usage: List all available migrations
   migration list|l
+  examples:
+  migration l                # list migration from storage/data/migration
+  migration -m=demo l        # list migration from src/App/Modules/demo/data/migration
+  migration -p=demo l        # list migration from src/App/Projects/demo/data/migration
 
 Arguments:
   help  Shows this help text
 
 Options:
- --p=ProjectName                 导出 app/Http/Projects 目录下指定的项目 (save in app/Http/Projects/xxx/data/migration)
- --m=ModuleName                  导出 app/Modules 目录指定的模块 (save in app/Modules/xxx/data/migration)
+ --p=ProjectName                 导出 app/Projects 目录下指定的项目 (save in app/Projects/xxx/data/migration)
+ --m=ModuleName                  导出 app/Modules  目录下指定的模块 (save in app/Modules/xxx/data/migration)
  --directory=str                 migration 数据所在的目录，默认为 storage/data/migration
  --table[=str]                   导出表结构，默认为 @；如果需要导出多个表，则使用逗号进行分割；支持前缀 xxx_；会被 --p|--m 覆盖;(不需要添加*号)
  --datas                         同时导出表数据，默认为跟随 table 参数；如果需要导出多个表，则使用逗号进行分割；支持前缀 xxx_*;(需要添加*号)
@@ -55,6 +59,7 @@ Options:
  --ts-based                      Timestamp based migration version
  --help                          Shows this help [optional]
 Documentation
+  https://tao996.github.io/phalcon-admin-docs/#/zh-cn/migration
   https://docs.phalcon.io/latest/db-migrations/
 ```
 
@@ -65,21 +70,29 @@ how we use the db config data
 ```php
 // src/phar-src/phalcon-migrations/src/Console/Commands/Migration.php
 // different with https://github.com/phalcon/migrations/blob/master/src/Console/Commands/Migration.php
-
-if ($configFile = $this->parser->get('config')) { // use the --config=file
+if ($configFile = $this->parser->get('config')) {
     $pathConfigFile = PATH_ROOT . ltrim($configFile);
     if (!file_exists($pathConfigFile)) {
         throw new \Exception($pathConfigFile . ' not exists');
     } else {
         $dbConfig = include_once $pathConfigFile;
     }
-} elseif (file_exists(PATH_CONFIG . 'migration.php')) { // read from src/config/migration.php
+} } elseif (file_exists(PATH_CONFIG . 'migration.php') && !in_array('skip',$this->parser->getParsedCommands())) {
     $data = include_once PATH_CONFIG . 'migration.php';
-    $dbConfig = ['database'=> $data['database'] ];
-    if (!empty($data[$action])){
-        $dbConfig['database'] = array_merge($dbConfig['database'],$data[$action]);
+    if (!empty($data) && !empty($data['database'])) {
+        $dbConfig = ['database' => $data['database']];
+        if (!empty($data[$action])) {
+            $dbConfig['database'] = array_merge($dbConfig['database'], $data[$action]);
+        }
+        if (in_array($action, ['g', 'generate']) && !empty($dbConfig['g'])) {
+            $dbConfig['database'] = array_merge($dbConfig, $dbConfig['g']);
+        } elseif (in_array($action, ['r', 'run']) && !empty($dbConfig['r'])) {
+            $dbConfig['database'] = array_merge($dbConfig['database'], $dbConfig['r']);
+        }
     }
-} else { // read from src/config/config.php
+}
+
+if (empty($dbConfig['database'])) {
     $dbDriver = $this->mvc->config()->path('database.default');
     $dbConfig = [
         'database' => array_merge(
@@ -87,6 +100,10 @@ if ($configFile = $this->parser->get('config')) { // use the --config=file
             $this->mvc->config()->path('database.stores.' . $dbDriver)->toArray()
         ),
     ];
+}
+if (empty($dbConfig['database'])) {
+    echo 'migration.php config database setting is empty;', PHP_EOL;
+    die(500);
 }
 
 $config = new Config($dbConfig);
